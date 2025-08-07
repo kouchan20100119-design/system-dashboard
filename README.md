@@ -11,7 +11,7 @@
 
 ## 実行方法
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
             or
 pip3 install --break-system-packages -r requirements.txt
 
