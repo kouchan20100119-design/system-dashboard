@@ -1,5 +1,6 @@
 from rich.console import Console
 from rich.table import Table
+from rich.progress import BarColumn, Progress
 import psutil
 import time
 import os
@@ -15,30 +16,54 @@ def get_cpu_temp():
     except (FileNotFoundError, ValueError):
         return "N/A"
 
+def make_bar(ratio, length=20):
+    filled = int(ratio * length)
+    empty = length - filled
+    return "[" + "■" * filled + " " * empty + "]"
+
 def draw():
     table = Table(title="システムダッシュボード")
 
     table.add_column("項目", style="cyan")
     table.add_column("値", style="magenta")
+    table.add_column("割合", style="green")
 
     # メモリ
     mem = psutil.virtual_memory()
-    table.add_row("メモリ使用量", f"{mem.used / (1024 ** 2):.1f} MB / {mem.total / (1024 ** 2):.1f} MB")
+    mem_ratio = mem.used / mem.total
+    mem_bar = make_bar(mem_ratio)
+    table.add_row(
+        "メモリ使用量",
+        f"{mem.used / (1024 ** 2):.1f} MB / {mem.total / (1024 ** 2):.1f} MB",
+        f"{mem_bar} {mem_ratio*100:.1f}%"
+    )
 
     # CPU
-    table.add_row("CPU使用率", f"{psutil.cpu_percent()} %")
+    cpu_percent = psutil.cpu_percent()
+    cpu_bar = make_bar(cpu_percent / 100)
+    table.add_row(
+        "CPU使用率",
+        f"{cpu_percent} %",
+        f"{cpu_bar} {cpu_percent:.1f}%"
+    )
 
-    # CPU温度
-    table.add_row("CPU温度", get_cpu_temp())
+    # CPU温度（割合表示は省略）
+    table.add_row("CPU温度", get_cpu_temp(), "")
 
-    # 稼働時間
+    # 稼働時間（割合表示は省略）
     uptime_sec = time.time() - psutil.boot_time()
     uptime_min = uptime_sec / 60
-    table.add_row("稼働時間", f"{uptime_min:.1f} 分")
+    table.add_row("稼働時間", f"{uptime_min:.1f} 分", "")
 
     # ストレージ
     disk = psutil.disk_usage("/")
-    table.add_row("ストレージ", f"{disk.used / (1024**3):.1f} GB / {disk.total / (1024**3):.1f} GB")
+    disk_ratio = disk.used / disk.total
+    disk_bar = make_bar(disk_ratio)
+    table.add_row(
+        "ストレージ",
+        f"{disk.used / (1024**3):.1f} GB / {disk.total / (1024**3):.1f} GB",
+        f"{disk_bar} {disk_ratio*100:.1f}%"
+    )
 
     console.clear()
     console.print(table)
