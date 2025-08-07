@@ -1,16 +1,19 @@
 from rich.console import Console
 from rich.table import Table
-from rich.progress import BarColumn, Progress
 import psutil
 import time
 import os
+import sys
+import termios
+import tty
+import select
 
 console = Console()
 
 def get_cpu_temp():
     try:
         with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
-            temp_str = f.read().strip()  # 改行などを除去
+            temp_str = f.read().strip()
             temp = int(temp_str) / 1000.0
         return f"{temp:.1f} °C"
     except (FileNotFoundError, ValueError):
@@ -20,6 +23,19 @@ def make_bar(ratio, length=20):
     filled = int(ratio * length)
     empty = length - filled
     return "[" + "■" * filled + " " * empty + "]"
+
+def getch_noblock():
+    # 非ブロッキングで1文字取得
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setcbreak(fd)
+        if select.select([sys.stdin], [], [], 0.1)[0]:
+            ch = sys.stdin.read(1)
+            return ch
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return None
 
 def draw():
     table = Table(title="システムダッシュボード")
@@ -47,13 +63,18 @@ def draw():
         f"{cpu_bar} {cpu_percent:.1f}%"
     )
 
-    # CPU温度（割合表示は省略）
+    # CPU温度
     table.add_row("CPU温度", get_cpu_temp(), "")
 
-    # 稼働時間（割合表示は省略）
+    # 稼働時間
     uptime_sec = time.time() - psutil.boot_time()
     uptime_min = uptime_sec / 60
-    table.add_row("稼働時間", f"{uptime_min:.1f} 分", "")
+    uptime_hr = uptime_sec / 3600
+    table.add_row("稼働時間", f"{uptime_hr:.1f} 時間 ({uptime_min:.1f} 分)", "")
+
+    # タスク数
+    tasks = len(psutil.pids())
+    table.add_row("動作中タスク数", f"{tasks} 個", "")
 
     # ストレージ
     disk = psutil.disk_usage("/")
@@ -67,11 +88,16 @@ def draw():
 
     console.clear()
     console.print(table)
+    console.print("[yellow]終了するには q を押してください。[/yellow]")
 
 if __name__ == "__main__":
     try:
         while True:
             draw()
+            ch = getch_noblock()
+            if ch == "q":
+                break
             time.sleep(1)
     except KeyboardInterrupt:
-        console.print("\n[bold red]終了しました。")
+        pass
+    console.print("\n[bold red]終了しました。")
