@@ -38,18 +38,18 @@ def getch_noblock():
     return None
 
 def draw():
-    table = Table(title="システムダッシュボード")
+    table = Table(title="System Dashboard")
 
-    table.add_column("項目", style="cyan")
-    table.add_column("値", style="magenta")
-    table.add_column("割合", style="green")
+    table.add_column("Item", style="cyan")
+    table.add_column("Value", style="magenta")
+    table.add_column("Usage", style="green")
 
-    # メモリ
+    # Memory
     mem = psutil.virtual_memory()
     mem_ratio = mem.used / mem.total
     mem_bar = make_bar(mem_ratio)
     table.add_row(
-        "メモリ使用量",
+        "Memory Usage",
         f"{mem.used / (1024 ** 2):.1f} MB / {mem.total / (1024 ** 2):.1f} MB",
         f"{mem_bar} {mem_ratio*100:.1f}%"
     )
@@ -58,37 +58,37 @@ def draw():
     cpu_percent = psutil.cpu_percent()
     cpu_bar = make_bar(cpu_percent / 100)
     table.add_row(
-        "CPU使用率",
+        "CPU Usage",
         f"{cpu_percent} %",
         f"{cpu_bar} {cpu_percent:.1f}%"
     )
 
-    # CPU温度
-    table.add_row("CPU温度", get_cpu_temp(), "")
+    # CPU Temperature
+    table.add_row("CPU Temperature", get_cpu_temp(), "")
 
-    # 稼働時間
+    # Uptime
     uptime_sec = time.time() - psutil.boot_time()
     uptime_min = uptime_sec / 60
     uptime_hr = uptime_sec / 3600
-    table.add_row("稼働時間", f"{uptime_hr:.1f} 時間 ({uptime_min:.1f} 分)", "")
+    table.add_row("Uptime", f"{uptime_hr:.1f} h ({uptime_min:.1f} min)", "")
 
-    # タスク数
+    # Task Count
     tasks = len(psutil.pids())
-    table.add_row("動作中タスク数", f"{tasks} 個", "")
+    table.add_row("Running Tasks", f"{tasks}", "")
 
-    # ストレージ
+    # Storage
     disk = psutil.disk_usage("/")
     disk_ratio = disk.used / disk.total
     disk_bar = make_bar(disk_ratio)
     table.add_row(
-        "ストレージ",
+        "Storage",
         f"{disk.used / (1024**3):.1f} GB / {disk.total / (1024**3):.1f} GB",
         f"{disk_bar} {disk_ratio*100:.1f}%"
     )
 
     console.clear()
     console.print(table)
-    console.print("[yellow]終了するには q を押してください。[/yellow]")
+    console.print("[yellow]Press q to quit.[/yellow]")
 
 if __name__ == "__main__":
     try:
@@ -100,4 +100,4 @@ if __name__ == "__main__":
             time.sleep(1)
     except KeyboardInterrupt:
         pass
-    console.print("\n[bold red]終了しました。")
+    console.print("\n[bold red]Finished![/bold red]")
