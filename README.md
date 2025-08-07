@@ -14,4 +14,4 @@ pip install -r requirements.txt
             or
 pip3 install --break-system-packages -r requirements.txt
 
-python dashboard.py
+python3 raspi-test.py
