@@ -11,4 +11,7 @@
 ## 実行方法
 ```bash
 pip install -r requirements.txt
+            or
+pip3 install --break-system-packages requirements.txt
+
 python dashboard.py
