@@ -24,17 +24,26 @@ class HtopBarApp(App):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        # CPUコアごとのバー
-        bars = []
+        
+        # 複数列に分けてCPUバーを見やすく並べる
+        bar_groups = []
         for i in range(psutil.cpu_count(logical=True)):
             label = Static(f"CPU{i}", classes="bar")
             bar = Static("", classes="bar")
             self.cpu_labels.append(label)
             self.cpu_bars.append(bar)
-            bars.extend([label, bar])
-        yield Horizontal(*bars)
+            group = Vertical(label, bar)
+            bar_groups.append(group)
+
+        # 例えば4列に分けて表示
+        columns = 4
+        rows = [bar_groups[i:i+columns] for i in range(0, len(bar_groups), columns)]
+        for row in rows:
+            yield Horizontal(*row)  # 各行を水平方向に配置
+
         yield self.table
         yield Footer()
+
 
     def on_mount(self) -> None:
         self.table.add_columns("PID", "Name", "CPU %", "Memory %")
