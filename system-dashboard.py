@@ -31,8 +31,8 @@ class HtopBarApp(App):
             bar = Static("", classes="bar")
             self.cpu_labels.append(label)
             self.cpu_bars.append(bar)
-            bar_row.mount(label)
-            bar_row.mount(bar)
+            bar_row.children.append(label)
+            bar_row.children.append(bar)
         yield bar_row
         yield self.table
         yield Footer()
