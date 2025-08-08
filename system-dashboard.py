@@ -43,7 +43,7 @@ class HtopApp(App):
         # テーブルの最初の行にカーソルを合わせる
         if self.table.row_count > 0:
             self.table.cursor_type = "row"
-            self.table.cursor_row = 0
+            self.table.move_cursor(row=0)
 
     def update_processes(self) -> None:
         selected_row = self.table.cursor_row if self.table.cursor_row is not None else 0
@@ -65,7 +65,7 @@ class HtopApp(App):
         # カーソル位置を維持
         if self.table.row_count > 0:
             self.table.cursor_type = "row"
-            self.table.cursor_row = min(selected_row, self.table.row_count - 1)
+            self.table.move_cursor(row=min(selected_row, self.table.row_count - 1))
 
     def update_cpu_graph(self) -> None:
         cpu = psutil.cpu_percent()
@@ -90,12 +90,10 @@ class HtopApp(App):
                     self.update_processes()
                 except Exception as e:
                     self.console.print(f"[red]Error killing process {pid}: {e}[/red]")
+        # on_key内のカーソル移動
         elif event.key == "up":
             if self.table.cursor_row is not None and self.table.cursor_row > 0:
-                self.table.cursor_row -= 1
+                self.table.move_cursor(row=self.table.cursor_row - 1)
         elif event.key == "down":
             if self.table.cursor_row is not None and self.table.cursor_row < self.table.row_count - 1:
-                self.table.cursor_row += 1
-
-if __name__ == "__main__":
-    HtopApp().run()
+                self.table.move_cursor(row=self.table.cursor_row + 1)
