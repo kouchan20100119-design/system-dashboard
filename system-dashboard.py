@@ -97,3 +97,6 @@ class HtopApp(App):
         elif event.key == "down":
             if self.table.cursor_row is not None and self.table.cursor_row < self.table.row_count - 1:
                 self.table.move_cursor(row=self.table.cursor_row + 1)
+if __name__ == "__main__":
+    HtopApp().run()
+
