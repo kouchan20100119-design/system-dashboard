@@ -15,4 +15,4 @@ pip3 install -r requirements.txt
             or
 pip3 install --break-system-packages -r requirements.txt
 
-python3 raspi-test.py
+python3 system-dashboard.py
