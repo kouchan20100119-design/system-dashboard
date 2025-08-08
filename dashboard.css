@@ -1,14 +1,27 @@
-#mem {
-    background: #333;
-    color: #0f0;
+#uptime {
+    background: #1e1e1e;
+    color: #5bafff;
+    padding: 0 1;
 }
 
-#uptime {
-    background: #333;
-    color: #09f;
+#cpu_total {
+    background: #1e1e1e;
+    color: #ffaa00;
+    padding: 0 1;
+}
+
+#mem {
+    background: #1e1e1e;
+    color: #00ff00;
+    padding: 0 1;
 }
 
 #procs {
-    border: round blue;
+    border: panel #5bafff;
 }
 
+.bar {
+    height: 1;
+    width: 40;
+    padding: 0 1;
+}
