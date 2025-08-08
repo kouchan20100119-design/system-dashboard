@@ -25,15 +25,14 @@ class HtopBarApp(App):
     def compose(self) -> ComposeResult:
         yield Header()
         # CPUコアごとのバー
-        bar_row = Horizontal()
+        bars = []
         for i in range(psutil.cpu_count(logical=True)):
             label = Static(f"CPU{i}", classes="bar")
             bar = Static("", classes="bar")
             self.cpu_labels.append(label)
             self.cpu_bars.append(bar)
-            bar_row.children.append(label)
-            bar_row.children.append(bar)
-        yield bar_row
+            bars.extend([label, bar])
+        yield Horizontal(*bars)
         yield self.table
         yield Footer()
 
