@@ -1,0 +1,13 @@
+#mem {
+    background: #333;
+    color: #0f0;
+}
+
+#uptime {
+    background: #333;
+    color: #09f;
+}
+
+#procs {
+    border: 2px solid #09f;
+}
