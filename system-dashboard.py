@@ -59,7 +59,7 @@ class HtopApp(App):
     def update_cpu_graph(self) -> None:
         cpu = psutil.cpu_percent()
         self.cpu_history.append(cpu)
-        self.cpu_graph.update(self.cpu_history)
+        self.cpu_graph.values = list(self.cpu_history)  # ← ここを修正
 
     async def on_key(self, event: events.Key) -> None:
         if event.key == "q":
