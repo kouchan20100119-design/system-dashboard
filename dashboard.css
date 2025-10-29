@@ -25,3 +25,31 @@
     width: 40;
     padding: 0 1;
 }
+.section_title {
+    text-style: bold;
+    color: #ffaa00;
+    padding: 1 0;
+}
+
+#summary_section, #cpu_core_section, #process_section {
+    border: solid #444;
+    margin: 1;
+    padding: 1;
+}
+
+#cpu_core_section {
+    layout: horizontal;
+    height: auto;
+}
+
+.core_label {
+    color: #5bafff;
+    padding: 0 1;
+}
+
+.core_bar {
+    width: 50;
+    color: #00ff00;
+    padding: 0 1;
+}
+

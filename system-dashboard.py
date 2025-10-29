@@ -23,27 +23,41 @@ class HtopBarApp(App):
     def compose(self) -> ComposeResult:
         yield Header()
 
-        # Uptimeとシステム全体のCPU/MEMバー
+    # システムサマリー
         yield Vertical(
+        Static("System Summary", classes="section_title"),
+        Vertical(
             self.uptime_box,
             self.cpu_total_bar,
             self.mem_bar,
             id="system_summary"
+        ),
+        id="summary_section"
         )
 
-        # CPUコアごとのバー（横並び）
-        bars = []
+    # CPUコア使用率
+        core_section = []
         for i in range(psutil.cpu_count(logical=True)):
-            label = Static(f"CPU{i}", classes="bar")
-            bar = Static("", classes="bar")
+            label = Static(f"CPU{i}", classes="core_label")
+            bar = Static("", classes="core_bar")
             self.cpu_labels.append(label)
             self.cpu_bars.append(bar)
-            bars.extend([label, bar])
-        yield Horizontal(*bars, id="cpu_core_bars")
+            core_section.append(Vertical(label, bar))
+        yield Horizontal(
+            Static("CPU Core Usage", classes="section_title"),
+            *core_section,
+            id="cpu_core_section"
+        )
 
-        # プロセステーブル
-        yield self.table
+    # プロセステーブル
+        yield Vertical(
+            Static("Top 30 Processes", classes="section_title"),
+            self.table,
+            id="process_section"
+        )
+
         yield Footer()
+
 
     def on_mount(self) -> None:
         self.table.add_columns("PID", "Name", "CPU %", "Memory %")
