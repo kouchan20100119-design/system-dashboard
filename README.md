@@ -1,6 +1,6 @@
 # system-dashboard
-ターミナルで使用できるLinux向けのダッシュボードです。
-開発中です。
+ターミナルで使用できるRspberry Pi向けのダッシュボードです。
+試作品です。
 
 ## 機能
 - CPU 使用率(CPU Usage)
