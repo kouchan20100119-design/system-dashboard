@@ -61,6 +61,8 @@ class HtopBarApp(App):
 
     def on_mount(self) -> None:
         self.table.add_columns("PID", "Name", "CPU %", "Memory %")
+        self.update_summary()
+        self.update_cpu_bars()
         self.update_processes()
         self.set_interval(1, self.update_processes)
         self.set_interval(1, self.update_cpu_bars)
@@ -108,14 +110,22 @@ class HtopBarApp(App):
                 processes.append(proc.info)
             except psutil.NoSuchProcess:
                 continue
-        processes = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)[:30]
+        processes = sorted(
+        processes,
+        key=lambda x: (x['cpu_percent'] or 0),
+        reverse=True
+        )[:30]
+
         for p in processes:
+            cpu = p['cpu_percent'] or 0
+            mem = p['memory_percent'] or 0
             self.table.add_row(
-                str(p['pid']),
-                p['name'] or "N/A",
-                f"{p['cpu_percent']:.1f}",
-                f"{p['memory_percent']:.1f}"
-            )
+            str(p['pid']),
+            p['name'] or "N/A",
+            f"{cpu:.1f}",
+            f"{mem:.1f}"
+        )
+
         if self.table.row_count > 0:
             self.table.cursor_type = "row"
             self.table.move_cursor(row=min(selected_row, self.table.row_count - 1))
